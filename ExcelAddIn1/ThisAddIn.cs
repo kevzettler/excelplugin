@@ -14,15 +14,17 @@ namespace ExcelAddIn1
     {
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
+            Excel.Worksheet activeWorksheet = ((Excel.Worksheet)Application.ActiveSheet);
+            Excel.Range firstRow = activeWorksheet.get_Range("A1");
+            firstRow.EntireRow.Insert(Excel.XlInsertShiftDirection.xlShiftDown);
+            Excel.Range newFirstRow = activeWorksheet.get_Range("A1");
+            newFirstRow.Value2 = "lETS START THIS THING";
+
             //lets start this thing
-            using (var ws = new WebSocket("ws://dragonsnest.far/Laputa"))
+            using (var ws = new WebSocket("ws://dumbsocket.heroku.com/tester"))
             {
-                ws.OnMessage += (sender, e) =>
-                    Excel.Worksheet activeWorksheet = ((Excel.Worksheet)Application.ActiveSheet);
-                    Excel.Range firstRow = activeWorksheet.get_Range("A1");
-                    firstRow.EntireRow.Insert(Excel.XlInsertShiftDirection.xlShiftDown);
-                    Excel.Range newFirstRow = activeWorksheet.get_Range("A1");
-                    newFirstRow.Value2 = "This text was added by using code" + e.data;
+                ws.OnMessage += (socket_sender, socket_e) =>
+                    newFirstRow.Value2 = "This is coming from the websocket" + socket_e.Data;
 
                 ws.Connect();
             }
