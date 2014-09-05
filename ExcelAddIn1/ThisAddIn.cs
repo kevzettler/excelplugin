@@ -21,10 +21,26 @@ namespace ExcelAddIn1
             newFirstRow.Value2 = "lETS START THIS THING";
 
             //lets start this thing
-            using (var ws = new WebSocket("ws://dumbsocket.heroku.com/tester"))
+            using (var ws = new WebSocket("ws://dumbsocket.herokuapp.com"))
             {
+                ws.OnError += (error_sender, error_e) => {
+                    Console.Write("socket error");                   
+                    //SOME BROKE SHIT                
+                };
+
+                ws.OnOpen += (open_sender, open_e) => {
+                    Console.Write("sockets open");
+                   //windows open
+                };
+
+                ws.OnClose += (close_sender, close_e) => {
+                    Console.Write("socket closed");
+                };
+
                 ws.OnMessage += (socket_sender, socket_e) =>
+                {
                     newFirstRow.Value2 = "This is coming from the websocket" + socket_e.Data;
+                };
 
                 ws.Connect();
             }
